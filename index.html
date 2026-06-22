@@ -1,13 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Script Builder</title>
+<title>Script Builder AI</title>
 </head>
-<body>
+<body style="background:#060912;color:#f1f5f9;font-family:sans-serif;margin:0;padding:20px">
+<h1 style="color:#a78bfa">🎬 Script Builder AI</h1>
+<p style="color:#475569;font-size:12px">Paste your idea and get a viral script!</p>
+<br>
+<textarea id="input" rows="5" style="width:100%;background:#1e293b;color:#f1f5f9;border:1px solid #334155;border-radius:12px;padding:14px;font-size:14px" placeholder="Paste your script idea here..."></textarea>
+<br><br>
+<button onclick="buildScript()" style="width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">Build Script ✦</button>
+<div id="result" style="margin-top:20px"></div>
 <script>
-window.location.href = "https://claude.ai";
+async function buildScript(){
+const text=document.getElementById('input').value.trim();
+if(!text)return;
+document.getElementById('result').innerHTML='<p style="color:#6366f1">Building...</p>';
+try{
+const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:'You are a short-form video script writer. Build into a complete script with HOOK, NARRATION, ENDING, CTA, CAPTION, HASHTAGS.',messages:[{role:'user',content:'Build this: '+text}]})});
+const data=await res.json();
+const result=data.content?.map(b=>b.text||'').join('')||'';
+document.getElementById('result').innerHTML='<div style="background:#1e293b;border-radius:12px;padding:20px;white-space:pre-wrap;color:#cbd5e1;margin-top:10px">'+result+'</div>';
+}catch(e){document.getElementById('result').innerHTML='<p style="color:red">Error! Try again.</p>';}
+}
 </script>
 </body>
-</html>
+  </html>
